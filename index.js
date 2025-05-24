@@ -1,23 +1,35 @@
 require("dotenv").config();
 
 const express = require("express");
-const app = express();
-
 const http = require("http");
-const server = http.createServer(app);
 const { Server } = require("socket.io");
-const io = new Server(server, {
-    cors: {
-        origin: [process.env.APP_URL]
-    }
-});
+const cors = require('cors');
+
+const app = express();
+const server = http.createServer(app);
+const chatSocket = require('./socket/chatSocket');
 
 const PORT = parseInt(process.env.PORT || "3001", 10);
 
-io.on("connection", (socket) => {
-    socket.on("send-message", (data) => {
-        io.emit("receive-message", data);
-    });
+app.use(cors({
+    origin: [process.env.APP_URL],
+    methods: ['GET', 'POST', 'DELETE', 'OPTIONS'],
+    credentials: true
+}))
+
+app.use(express.json());
+
+app.use('/login', require('./routes/userRoutes'));
+app.use('/register', require('./routes/userRoutes'));
+app.use('/chat', require('./routes/messageRoutes'));
+
+const io = new Server(server, {
+    cors: {
+        origin: [process.env.APP_URL],
+        methods: ['GET', 'POST']
+    }
 });
+
+chatSocket(io);
 
 server.listen(PORT, () => console.log("サーバーが起動しました。"));
