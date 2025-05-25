@@ -12,10 +12,10 @@
 
 // module.exports = Postgres;
 
-import 'dotenv/config';
-import postgres from 'postgres';
+require('dotenv').config();
+const postgres = require('postgres');
 
 const connection = process.env.SUPABASE_URL;
 const sql = postgres(connection);
 
-export default sql;
+module.exports = sql;

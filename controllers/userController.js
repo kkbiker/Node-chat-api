@@ -1,4 +1,5 @@
-const userModel = require('../models/userModel');
+const bcrypt = require('bcrypt');
+const userModel = require('../models/userModel.js');
 
 exports.getAllUser = async (req, res) => {
     const users = await userModel.getAllUsers();
@@ -6,6 +7,34 @@ exports.getAllUser = async (req, res) => {
 };
 
 exports.createUser = async (req, res) => {
-    const { name } = req.boby;
-    await userModel.createUser(name);
+    await userModel.createUser(req, res);
 };
+
+exports.getUser = async (req, res) => {
+    const { email, password } = req.body;
+    const user = await userModel.getUser(email);
+
+    if (!user) {
+        console.log("ユーザーが存在しません。");
+    }
+
+    bcrypt.compare(password, user.password, (err, result) => {
+        if (err) {
+            console.error('照準エラー:', err);
+            return;
+        }
+
+        if (result) {
+            console.log("ログイン成功");
+            res.status(200).json({
+                id: user.id,
+                name: user.name,
+                email: user.email,
+                is_master: user.is_master,
+                create_at: user.create_at
+            });
+        } else {
+            console.log("ログイン失敗");
+        }
+    });
+}
