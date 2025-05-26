@@ -15,7 +15,7 @@ app.use(cors({
     origin: [process.env.APP_URL],
     methods: ['GET', 'POST', 'DELETE', 'OPTIONS'],
     credentials: true
-}))
+}));
 
 app.use(express.json());
 
@@ -23,6 +23,7 @@ app.use('/', require('./routes/userRoutes'));
 app.use('/', require('./routes/userRoutes'));
 app.use('/mailsend', require('./routes/mailRoutes'));
 app.use('/chat', require('./routes/messageRoutes'));
+app.use('/genre', require('./routes/genreRoutes'));
 
 const io = new Server(server, {
     cors: {

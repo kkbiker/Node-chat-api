@@ -25,7 +25,6 @@ exports.getUser = async (req, res) => {
         }
 
         if (result) {
-            console.log("ログイン成功");
             res.status(200).json({
                 id: user.id,
                 name: user.name,
