@@ -7,12 +7,7 @@ const { readFile } = require('fs/promises')
 exports.sendmail = async (req, res) => {
     const { email } = req.body;
 
-    // const templatePath = path.join(__dirname, '../templates/mailtemplate.ejs');
-    // const template = await readFile(templatePath, 'utf-8');
-
     const code = Math.floor(100000 + (Math.random() * 900000));
-
-    // const htmlcontent = ejs.render(template, {code});
     
     try {
         await transporter.sendMail({
