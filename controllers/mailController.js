@@ -7,19 +7,19 @@ const { readFile } = require('fs/promises')
 exports.sendmail = async (req, res) => {
     const { email } = req.body;
 
-    const templatePath = path.join(__dirname, '../templates/mailtemplate.ejs');
-    const template = await readFile(templatePath, 'utf-8');
+    // const templatePath = path.join(__dirname, '../templates/mailtemplate.ejs');
+    // const template = await readFile(templatePath, 'utf-8');
 
     const code = Math.floor(100000 + (Math.random() * 900000));
 
-    const htmlcontent = ejs.render(template, {code});
+    // const htmlcontent = ejs.render(template, {code});
     
     try {
         await transporter.sendMail({
             from: process.env.SMTP_USER,
             to: email,
             subject: "認証コード送信 -Vision Azzuro-",
-            html: htmlcontent,
+            text: code,
         });
 
         res.status(200).json({code: code});
