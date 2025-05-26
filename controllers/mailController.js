@@ -19,7 +19,7 @@ exports.sendmail = async (req, res) => {
             from: process.env.SMTP_USER,
             to: email,
             subject: "認証コード送信 -Vision Azzuro-",
-            text: code,
+            html: `<h2>認証番号</h2><p>以下の認証コードをご入力ください</p><h3>${code}</h3>`,
         });
 
         res.status(200).json({code: code});
