@@ -35,10 +35,11 @@ exports.save = async (req, res) => {
     }
 };
 
-exports.saveSubArticle = async (req, res) => {
-    await skillModel.saveSubArticle(req);
-};
-
-exports.deleteArticle = async (req, res) => {
-    await skillModel.deleteArticle(req);
-};
+exports.postStatus = async (req, res) => {
+    try {
+        await skillModel.postStatus(req);
+        return res.status(200).json({message: "更新完了"});
+    } catch (err) {
+        console.error(err);
+    }
+}
