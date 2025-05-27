@@ -8,5 +8,7 @@ router.post('/save', skillController.save);
 router.get('/findArticleByid', skillController.findArticleByid);
 router.get('/findArticlesByUserId', skillController.findArticlesByUserId);
 router.post('/postStatus', skillController.postStatus);
+router.post('/favorite', skillController.favorite);
+router.get('/findByGenre', skillController.findByGenre);
 
 module.exports = router;

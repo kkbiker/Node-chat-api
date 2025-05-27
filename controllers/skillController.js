@@ -10,7 +10,7 @@ exports.findPostList = async (req, res) => {
         const rows = await skillModel.findPostList(req);
         return res.status(200).json(rows);
     } catch (err) {
-        return res.status(500).json({message: "取得失敗"});
+        return res.status(500).json({ message: "取得失敗" });
     }
 }
 
@@ -19,9 +19,14 @@ exports.findArticlesByUserId = async (req, res) => {
     res.status(200).json(articles);
 };
 
+exports.findByGenre = async (req, res) => {
+    const article = await skillModel.findByGenre(req);
+    res.status(200).json(article)
+};
+
 exports.findArticleByid = async (req, res) => {
-    const articles = await skillModel.findArticleByid(req);
-    res.status(200).json(articles);
+    const article = await skillModel.findArticleByid(req);
+    res.status(200).json(article);
 };
 
 exports.save = async (req, res) => {
@@ -47,8 +52,17 @@ exports.save = async (req, res) => {
 exports.postStatus = async (req, res) => {
     try {
         await skillModel.postStatus(req);
-        return res.status(200).json({message: "更新完了"});
+        return res.status(200).json({ message: "更新完了" });
     } catch (err) {
         console.error(err);
     }
-}
+};
+
+exports.favorite = async (req, res) => {
+    try {
+        await skillModel.favorite(req);
+        return res.status(200).json({messsage: "お気に入り登録に成功しました。"});
+    } catch (err) {
+        console.log(err);
+    }
+};
