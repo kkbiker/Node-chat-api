@@ -33,7 +33,7 @@ exports.findArticlesByUserId = async (req) => {
     const { userId } = req.query;
 
     try {
-        const rows = await sql`SELECT sg.id AS subgenre_id, sg.name AS subgenre_name, u.name AS user_name, a.id AS id, a.title AS title, a.description AS description, a.img_path AS a_img_path, a.is_edit AS is_edit, a.is_public AS is_public, a.create_at AS create_at, sa.id AS sub_id, sa.sub_title AS sub_title, sa.content AS content, sa.img_path AS sa_img_path, count(f.id) AS favorite_count FROM articles a LEFT OUTER JOIN sub_articles sa ON a.id = sa.parent_id LEFT OUTER JOIN subgenres sg ON a.genre_id = sg.id LEFT OUTER JOIN favorites f ON a.id = f.article_id LEFT OUTER JOIN users u ON a.user_id = u.id WHERE a.user_id = ${userId} GROUP BY a.id, u.name, sg.id, sa.id, sa.sub_title, sa.content, sa.img_path ORDER BY a.create_at DESC;`;
+        const rows = await sql`SELECT sg.id AS subgenre_id, sg.name AS subgenre_name, a.id AS id, a.title AS title, a.description AS description, a.is_edit AS is_edit, a.is_public AS is_public, to_char(a.create_at, 'YYYY/MM/DD') AS create_at, count(f.id) AS favorite_count FROM articles a LEFT OUTER JOIN subgenres sg ON a.genre_id = sg.id LEFT OUTER JOIN favorites f ON a.id = f.article_id LEFT OUTER JOIN users u ON a.user_id = u.id WHERE a.user_id = ${userId} GROUP BY a.id, u.name, sg.id ORDER BY a.create_at DESC;`;
 
         const articlesMap = new Map();
 
@@ -44,25 +44,14 @@ exports.findArticlesByUserId = async (req) => {
                 articlesMap.set(id, {
                     subgenreId: row.subgenre_id,
                     subgenreName: row.subgenre_name,
-                    userName: row.user_name,
                     id: id,
                     title: row.title,
                     description: row.description,
-                    aImgPath: row.a_img_path,
                     isEdit: row.is_edit,
                     isPublic: row.is_public,
                     createAt: row.create_at,
-                    subArticles: [],
                     favoriteCount: row.favorite_count,
                 });
-            }
-
-            if (row.sub_title !== null) {
-                articlesMap.get(id).subArticles.push({
-                    subTitle: row.sub_title,
-                    content: row.content,
-                    saImgPath: row.sa_img_path,
-                })
             }
         }
 
@@ -77,7 +66,7 @@ exports.findArticleByid = async (req) => {
     const {postId} = req.query;
 
     try {
-        const rows = await sql`SELECT sg.id AS subgenre_id, sg.name AS subgenre_name, u.name AS user_name, a.id AS id, a.title AS title, a.description AS description, a.img_path AS a_img_path, a.is_edit AS is_edit, a.is_public AS is_public, a.create_at AS create_at, sa.sub_title AS sub_title, sa.content AS content, sa.img_path AS sa_img_path, count(f.id) AS favorite_count FROM articles a LEFT OUTER JOIN sub_articles sa ON a.id = sa.parent_id LEFT OUTER JOIN subgenres sg ON a.genre_id = sg.id LEFT OUTER JOIN favorites f ON a.id = f.article_id LEFT OUTER JOIN users u ON a.user_id = u.id WHERE a.id = ${postId} GROUP BY a.id, u.name, sg.id, sa.id, sa.sub_title, sa.content, sa.img_path ORDER BY sa.id ASC;`;
+        const rows = await sql`SELECT sg.id AS subgenre_id, sg.name AS subgenre_name, u.name AS user_name, a.id AS id, a.title AS title, a.description AS description, a.img_path AS a_img_path, a.is_edit AS is_edit, a.is_public AS is_public, to_char(a.create_at, 'YYYY/MM/DD') AS create_at, sa.sub_title AS sub_title, sa.content AS content, sa.img_path AS sa_img_path, count(f.id) AS favorite_count FROM articles a LEFT OUTER JOIN sub_articles sa ON a.id = sa.parent_id LEFT OUTER JOIN subgenres sg ON a.genre_id = sg.id LEFT OUTER JOIN favorites f ON a.id = f.article_id LEFT OUTER JOIN users u ON a.user_id = u.id WHERE a.id = ${postId} GROUP BY a.id, u.name, sg.id, sa.id, sa.sub_title, sa.content, sa.img_path ORDER BY sa.id ASC;`;
 
         const articlesMap = new Map();
 
@@ -110,7 +99,6 @@ exports.findArticleByid = async (req) => {
             }
         }
 
-        console.log(articlesMap);
         return Array.from(articlesMap.values())[0];
     } catch (err) {
         console.log(err);
@@ -133,3 +121,8 @@ exports.deleteArticle = async (req) => {
     const { postId } = req.body;
     await sql`with delete_articles as (delete from articles where id = ${postId} returning id) delete from sub_articles where parent_id in (select id from delete_articles);`;
 };
+
+exports.postStatus = async (req) => {
+    const {articleId, isPublic} = req.body;
+    await sql`UPDATE articles SET is_edit = false, is_public = ${isPublic} WHERE id = ${articleId};`;
+}

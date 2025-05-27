@@ -6,5 +6,6 @@ router.get('/showAll', skillController.getAllGenre);
 router.post('/save', skillController.save);
 router.get('/findArticleByid', skillController.findArticleByid);
 router.get('/findArticlesByUserId', skillController.findArticlesByUserId);
+router.post('/postStatus', skillController.postStatus);
 
 module.exports = router;
