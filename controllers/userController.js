@@ -29,6 +29,7 @@ exports.getUser = async (req, res) => {
                 id: user.id,
                 name: user.name,
                 email: user.email,
+                companyId: user.company_id,
                 is_master: user.is_master,
                 create_at: user.create_at
             });

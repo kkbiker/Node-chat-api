@@ -29,33 +29,21 @@ exports.getAllGenre = async () => {
     return Array.from(genresMap.values());
 };
 
+exports.findPostList = async (req) => {
+    const {companyId} = req.query;
+
+    const rows = await sql`SELECT sg.id AS subgenre_id, sg.name AS subgenre_name, a.id AS id, a.title AS title, a.description AS description, a.is_edit AS is_edit, a.is_public AS is_public, to_char(a.create_at, 'YYYY/MM/DD') AS create_at, count(f.id) AS favorite_count FROM articles a LEFT OUTER JOIN subgenres sg ON a.genre_id = sg.id LEFT OUTER JOIN favorites f ON a.id = f.article_id LEFT OUTER JOIN users u ON a.user_id = u.id WHERE a.is_edit = false AND (a.is_public = true OR (a.is_public = false AND u.company_id = ${companyId})) GROUP BY a.id, u.name, sg.id ORDER BY a.create_at DESC;`;
+
+    return rows;
+}
+
 exports.findArticlesByUserId = async (req) => {
     const { userId } = req.query;
 
     try {
         const rows = await sql`SELECT sg.id AS subgenre_id, sg.name AS subgenre_name, a.id AS id, a.title AS title, a.description AS description, a.is_edit AS is_edit, a.is_public AS is_public, to_char(a.create_at, 'YYYY/MM/DD') AS create_at, count(f.id) AS favorite_count FROM articles a LEFT OUTER JOIN subgenres sg ON a.genre_id = sg.id LEFT OUTER JOIN favorites f ON a.id = f.article_id LEFT OUTER JOIN users u ON a.user_id = u.id WHERE a.user_id = ${userId} GROUP BY a.id, u.name, sg.id ORDER BY a.create_at DESC;`;
 
-        const articlesMap = new Map();
-
-        for (const row of rows) {
-            const id = row.id;
-
-            if (!articlesMap.has(id)) {
-                articlesMap.set(id, {
-                    subgenreId: row.subgenre_id,
-                    subgenreName: row.subgenre_name,
-                    id: id,
-                    title: row.title,
-                    description: row.description,
-                    isEdit: row.is_edit,
-                    isPublic: row.is_public,
-                    createAt: row.create_at,
-                    favoriteCount: row.favorite_count,
-                });
-            }
-        }
-
-        return Array.from(articlesMap.values());
+        return rows;
     } catch (err) {
         console.err(err);
         throw new Error("記事の取得に失敗しました");
