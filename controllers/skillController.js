@@ -5,6 +5,15 @@ exports.getAllGenre = async (req, res) => {
     res.json(genres);
 };
 
+exports.findPostList = async (req, res) => {
+    try {
+        const rows = await skillModel.findPostList(req);
+        return res.status(200).json(rows);
+    } catch (err) {
+        return res.status(500).json({message: "取得失敗"});
+    }
+}
+
 exports.findArticlesByUserId = async (req, res) => {
     const articles = await skillModel.findArticlesByUserId(req);
     res.status(200).json(articles);

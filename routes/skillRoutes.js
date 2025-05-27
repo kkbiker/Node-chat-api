@@ -3,6 +3,7 @@ const router = express.Router();
 const skillController = require('../controllers/skillController');
 
 router.get('/showAll', skillController.getAllGenre);
+router.get('/findPostList', skillController.findPostList);
 router.post('/save', skillController.save);
 router.get('/findArticleByid', skillController.findArticleByid);
 router.get('/findArticlesByUserId', skillController.findArticlesByUserId);

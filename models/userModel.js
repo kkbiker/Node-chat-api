@@ -44,6 +44,6 @@ exports.createUser = async (req, res) => {
 };
 
 exports.getUser = async (email) => {
-    const rows = await sql`SELECT id, name, email, password, is_master, create_at FROM users WHERE email = ${email};`;
+    const rows = await sql`SELECT id, name, email, password, is_master, company_id, create_at FROM users WHERE email = ${email};`;
     return rows[0];
 };
