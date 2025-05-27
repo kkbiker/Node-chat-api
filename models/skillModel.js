@@ -35,7 +35,7 @@ exports.findPostList = async (req) => {
     const rows = await sql`SELECT sg.id AS subgenre_id, sg.name AS subgenre_name, a.id AS id, a.title AS title, a.description AS description, a.is_edit AS is_edit, a.is_public AS is_public, to_char(a.create_at, 'YYYY/MM/DD') AS create_at, count(f.id) AS favorite_count FROM articles a LEFT OUTER JOIN subgenres sg ON a.genre_id = sg.id LEFT OUTER JOIN favorites f ON a.id = f.article_id LEFT OUTER JOIN users u ON a.user_id = u.id WHERE a.is_edit = false AND (a.is_public = true OR (a.is_public = false AND u.company_id = ${companyId})) GROUP BY a.id, u.name, sg.id ORDER BY a.create_at DESC;`;
 
     return rows;
-}
+};
 
 exports.findArticlesByUserId = async (req) => {
     const { userId } = req.query;
@@ -48,7 +48,20 @@ exports.findArticlesByUserId = async (req) => {
         console.err(err);
         throw new Error("記事の取得に失敗しました");
     }
-}
+};
+
+exports.findByGenre = async (req) => {
+    const {id, companyId} = req.query;
+
+    try {
+        const rows = await sql`SELECT sg.id AS subgenre_id, sg.name AS subgenre_name, a.id AS id, a.title AS title, a.description AS description, a.is_edit AS is_edit, a.is_public AS is_public, to_char(a.create_at, 'YYYY/MM/DD') AS create_at, count(f.id) AS favorite_count FROM articles a LEFT OUTER JOIN subgenres sg ON a.genre_id = sg.id LEFT OUTER JOIN favorites f ON a.id = f.article_id LEFT OUTER JOIN users u ON a.user_id = u.id WHERE sg.id = ${id} AND a.is_edit = false AND (a.is_public = true OR (a.is_public = false AND u.company_id = ${companyId})) GROUP BY a.id, u.name, sg.id ORDER BY a.create_at DESC;`
+
+        return rows;
+    } catch (err) {
+        console.err(err);
+        throw new Error("記事の取得に失敗しました");
+    }
+};
 
 exports.findArticleByid = async (req) => {
     const {postId} = req.query;
@@ -113,4 +126,10 @@ exports.deleteArticle = async (req) => {
 exports.postStatus = async (req) => {
     const {articleId, isPublic} = req.body;
     await sql`UPDATE articles SET is_edit = false, is_public = ${isPublic} WHERE id = ${articleId};`;
+}
+
+exports.favorite = async (req) => {
+    const {postId, userId} = req.body;
+    await sql`DELETE FROM favorites WHERE article_id = ${postId} AND user_id = ${userId};`;
+    await sql`INSERT INTO favorites (article_id, user_id) VALUES (${postId}, ${userId});`;
 }
