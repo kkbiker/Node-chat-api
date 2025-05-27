@@ -24,6 +24,7 @@ app.use('/', require('./routes/userRoutes'));
 app.use('/mailsend', require('./routes/mailRoutes'));
 app.use('/chat', require('./routes/messageRoutes'));
 app.use('/genre', require('./routes/genreRoutes'));
+app.use('/skill', require('./routes/skillRoutes'));
 
 const io = new Server(server, {
     cors: {
