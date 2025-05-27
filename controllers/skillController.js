@@ -66,3 +66,24 @@ exports.favorite = async (req, res) => {
         console.log(err);
     }
 };
+
+exports.getComments = async (req, res) => {
+    const {articleId} = req.query;
+    try {
+        const comments = await skillModel.getComments(articleId);
+        return res.status(200).json(comments);
+    } catch (err) {
+        console.log(err);
+    }
+};
+
+exports.insertComment = async (req, res) => {
+    const {userId, articleId, comment} = req.body;
+    try {
+        await skillModel.insertComment(comment, userId, articleId);
+        const comments = await skillModel.getComments(articleId);
+        return res.status(200).json(comments);
+    } catch (err) {
+        console.log(err);
+    }
+}
