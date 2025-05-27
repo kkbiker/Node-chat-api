@@ -10,5 +10,7 @@ router.get('/findArticlesByUserId', skillController.findArticlesByUserId);
 router.post('/postStatus', skillController.postStatus);
 router.post('/favorite', skillController.favorite);
 router.get('/findByGenre', skillController.findByGenre);
+router.get('/getComments', skillController.getComments);
+router.post('/insertComment', skillController.insertComment);
 
 module.exports = router;

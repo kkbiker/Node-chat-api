@@ -126,10 +126,20 @@ exports.deleteArticle = async (req) => {
 exports.postStatus = async (req) => {
     const {articleId, isPublic} = req.body;
     await sql`UPDATE articles SET is_edit = false, is_public = ${isPublic} WHERE id = ${articleId};`;
-}
+};
 
 exports.favorite = async (req) => {
     const {postId, userId} = req.body;
     await sql`DELETE FROM favorites WHERE article_id = ${postId} AND user_id = ${userId};`;
     await sql`INSERT INTO favorites (article_id, user_id) VALUES (${postId}, ${userId});`;
+};
+
+exports.getComments = async (articleId) => {
+    const rows = await sql`SELECT c.id, c.comment, u.id AS user_id, u.name AS user_name, to_char(c.create_at, 'YYYY/MM/DD HH24:MI') AS create_at FROM skill_commnets c INNER JOIN users u ON c.user_id = u.id WHERE c.article_id = ${articleId} ORDER BY c.create_at DESC;`;
+    return rows;
+};
+
+exports.insertComment = async (comment, userId, articleId) => {
+    const rows = await sql`INSERT INTO skill_commnets (comment, article_id, user_id) VALUES (${comment}, ${articleId}, ${userId}) RETURNING article_id;`;
+    return rows[0];
 }
