@@ -161,3 +161,8 @@ exports.insertComment = async (comment, userId, articleId) => {
 exports.problem = async (problem, articleId) => {
     await sql`INSERT INTO problems (problem, article_id) VALUES (${problem}, ${articleId});`;
 };
+
+exports.showFavorite = async (userId) => {
+    const rows = sql`SELECT f.id AS id, f.article_id AS articleId, a.title AS title, sg.name AS genre_name FROM favorites f INNER JOIN articles a ON f.article_id = a.id INNER JOIN subgenres sg ON a.genre_id = sg.id INNER JOIN users u ON f.user_id = u.id WHERE u.id = ${userId};`;
+    return rows;
+};

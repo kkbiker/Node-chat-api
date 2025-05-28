@@ -102,3 +102,13 @@ exports.problem = async (req, res) => {
         console.log(err);
     }
 };
+
+exports.showFavorite = async (req, res) => {
+    const {userId} = req.query;
+    try {
+        const favorites = await skillModel.showFavorite(userId);
+        return res.status(200).json(favorites);
+    } catch (err) {
+        console.log(err);
+    }
+};
