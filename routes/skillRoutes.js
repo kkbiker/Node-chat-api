@@ -12,5 +12,6 @@ router.post('/favorite', skillController.favorite);
 router.get('/findByGenre', skillController.findByGenre);
 router.get('/getComments', skillController.getComments);
 router.post('/insertComment', skillController.insertComment);
+router.get('/findArticlesByTitle', skillController.findArticlesByTitle);
 
 module.exports = router;

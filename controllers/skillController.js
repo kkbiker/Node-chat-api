@@ -29,6 +29,11 @@ exports.findArticleByid = async (req, res) => {
     res.status(200).json(article);
 };
 
+exports.findArticlesByTitle = async (req, res) => {
+    const articles = await skillModel.findArticlesByTitle(req);
+    res.status(200).json(articles);
+};
+
 exports.save = async (req, res) => {
     try {
         if (req.body.postId) {
