@@ -13,5 +13,6 @@ router.get('/findByGenre', skillController.findByGenre);
 router.get('/getComments', skillController.getComments);
 router.post('/insertComment', skillController.insertComment);
 router.get('/findArticlesByTitle', skillController.findArticlesByTitle);
+router.post('/problem', skillController.problem);
 
 module.exports = router;
