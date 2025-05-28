@@ -91,4 +91,14 @@ exports.insertComment = async (req, res) => {
     } catch (err) {
         console.log(err);
     }
-}
+};
+
+exports.problem = async (req, res) => {
+    const {problem, articleId} = req.body;
+    try {
+        await skillModel.problem(problem, articleId);
+        return res.status(200).json({message: "問題報告完了"});
+    } catch (err) {
+        console.log(err);
+    }
+};

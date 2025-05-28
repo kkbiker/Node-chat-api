@@ -156,4 +156,8 @@ exports.getComments = async (articleId) => {
 exports.insertComment = async (comment, userId, articleId) => {
     const rows = await sql`INSERT INTO skill_commnets (comment, article_id, user_id) VALUES (${comment}, ${articleId}, ${userId}) RETURNING article_id;`;
     return rows[0];
-}
+};
+
+exports.problem = async (problem, articleId) => {
+    await sql`INSERT INTO problems (problem, article_id) VALUES (${problem}, ${articleId});`;
+};
