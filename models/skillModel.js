@@ -50,6 +50,20 @@ exports.findArticlesByUserId = async (req) => {
     }
 };
 
+exports.findArticlesByTitle = async (req) => {
+    const { search } = req.query;
+    const title = "%" + search + "%";
+
+    try {
+        const rows = await sql`SELECT sg.id AS subgenre_id, sg.name AS subgenre_name, a.id AS id, a.title AS title, a.description AS description, a.is_edit AS is_edit, a.is_public AS is_public, to_char(a.create_at, 'YYYY/MM/DD') AS create_at, count(f.id) AS favorite_count FROM articles a LEFT OUTER JOIN subgenres sg ON a.genre_id = sg.id LEFT OUTER JOIN favorites f ON a.id = f.article_id LEFT OUTER JOIN users u ON a.user_id = u.id WHERE title like ${title} GROUP BY a.id, u.name, sg.id ORDER BY a.create_at DESC;`;
+
+        return rows;
+    } catch (err) {
+        console.err(err);
+        throw new Error("記事の取得に失敗しました");
+    }
+};
+
 exports.findByGenre = async (req) => {
     const {id, companyId} = req.query;
 
